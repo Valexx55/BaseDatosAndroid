@@ -1,12 +1,14 @@
 package edu.val.basedatosandroid;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BaseDatosCoches extends SQLiteOpenHelper {
@@ -66,11 +68,33 @@ public class BaseDatosCoches extends SQLiteOpenHelper {
     public List<Coche> obtenerCochesPersona (Persona persona)
     {
         List<Coche> lista_coches = null;
+        SQLiteDatabase sqLiteDatabase = null;
+        String instruccion_consulta = "SELECT modelo  FROM COCHE WHERE idpersona = " + persona.getId();
+        Cursor cursor = null;//objeto que me permite recorrer los resultados de una consulta
+        String modelo_aux = null;
+        Coche coche_aux = null;
 
-            //TODO leer los coches de la persona que me pasan
+            sqLiteDatabase = this.getReadableDatabase();//obtengo la Base de datos en modo lectura
+            cursor = sqLiteDatabase.rawQuery(instruccion_consulta, null);
+            if (cursor !=null && cursor.getCount()>0) //si la consulta ha recuperado algún registro
+            {
+                Log.d("ETIQUETA_LOG", "La consulta ha recuperado datos");
+                cursor.moveToFirst();
+                lista_coches = new ArrayList<>(cursor.getCount());
+                //tengo que ir leyendo los coches
+                //bucle de 1 a N
+                do {
+                    modelo_aux = cursor.getString(0);//0 es la primera columna de la consulta -modelo en nuestro caso-
+                    coche_aux = new Coche(modelo_aux);
+                    lista_coches.add(coche_aux);
+
+                }while (cursor.moveToNext());
+
+                cursor.close();
+            }
+            cerrarBaseDatos(sqLiteDatabase);
 
         return lista_coches;
-
     }
 
 }
