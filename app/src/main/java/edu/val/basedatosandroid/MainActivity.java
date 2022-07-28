@@ -1,6 +1,8 @@
 package edu.val.basedatosandroid;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -8,6 +10,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -15,6 +18,10 @@ public class MainActivity extends AppCompatActivity {
     private BaseDatosCoches baseDatosCoches;
     private Integer[] ids_persona = {1, 2, 3};
     private Spinner spinner;
+
+    private RecyclerView recyclerView;
+    private AdapterListaCoches adapterListaCoches;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,14 +68,27 @@ public class MainActivity extends AppCompatActivity {
 
      if (null!=lista_coches)
      {
+         //TODO MOSTRAR LA LISTA DE COCHES CONSEGUIDA DE LA CONSULTA
+         //DE FORMA DINÁMICA, ES DECIR, EN UN RECYCLERVIEW
          Log.d("ETIQUETA_LOG", "La consulta ha recuperado coches");
          for (Coche c : lista_coches)
          {
              Log.d("ETIQUETA_LOG", "Coche = " + c.getModelo());
          }
 
+         this.recyclerView =  findViewById(R.id.recview);
+         this.adapterListaCoches = new AdapterListaCoches(lista_coches);
+         this.recyclerView.setAdapter(this.adapterListaCoches);
+         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+         this.recyclerView.setLayoutManager(layoutManager);
+
      } else {
          Log.d("ETIQUETA_LOG", "La consulta NO ha recuperado coches");
+         this.recyclerView =  findViewById(R.id.recview);
+         this.adapterListaCoches = new AdapterListaCoches(new ArrayList<Coche>());
+         this.recyclerView.setAdapter(this.adapterListaCoches);
+         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+         this.recyclerView.setLayoutManager(layoutManager);
      }
 
     }
